@@ -11,16 +11,27 @@ const cats = {
 let data = [];
 for (let [cat, ids] of Object.entries(cats)) {
   ids.forEach((id, index) => {
-    // প্রতিটি ক্যাটাগরির প্রথম ৫টি ছবি ফ্রি থাকবে, বাকি সব লক থাকবে (৫০ কয়েন)
+    // প্রতিটি ক্যাটাগরির প্রথম ১০টি ছবি ফ্রি থাকবে, বাকিগুলো লক থাকবে (১০ কয়েন)
     let isFree = index < 10; 
     data.push({
       id: String(id),
+      intId: id,
       category: cat,
-      isLocked: !isFree,
-      price: isFree ? 0 : 50,
+      isUnlocked: isFree,
+      price: isFree ? 0 : 10,  // এখানে দাম ১০ করে দেওয়া হয়েছে
       thumbUrl: `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/thumbs/${id}.webp`,
       fullUrl: `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/full/${id}.jpg`
     });
   });
 }
-console.log(JSON.stringify(data, null, 2));
+
+// ফাইলটি স্বয়ংক্রিয়ভাবে ডাউনলোড করার কোড
+const jsonString = JSON.stringify(data, null, 2);
+const blob = new Blob([jsonString], { type: "application/json" });
+const link = document.createElement("a");
+link.href = URL.createObjectURL(blob);
+link.download = "wallpapers.json";
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+console.log("wallpapers.json ফাইলটি সফলভাবে ডাউনলোড হয়েছে!");
